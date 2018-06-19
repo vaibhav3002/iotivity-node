@@ -2,7 +2,7 @@
   "name": "iotivity-node",
   "version": "1.3.1-2",
   "description": "IoTivity bindings",
-  "repository": "https://github.com/otcshare/iotivity-node/",
+  "repository": "https://github.com/vaibhav3002/iotivity-node/",
   "license": "Apache-2.0",
   "main": "index.js",
   "engines": {
