@@ -180,7 +180,7 @@ if ( buildIotivity ) {
 		// Build
 	var sconsCommand = "scons";
 	var sconsArguments = [
-		"SECURED=1",
+		"SECURED=0",
 		"RD_MODE=all",
 		"EXC_PROV_SUPPORT=1"
 	]
