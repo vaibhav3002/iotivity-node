@@ -143,22 +143,22 @@ if ( !fs.existsSync( repoPaths.iotivity ) ) {
 		// Do a full checkout when doing a commitid
 		run( "git", [ "clone",
 			"https://gerrit.iotivity.org/gerrit/iotivity", repoPaths.iotivity ] );
-		run( "git", [ "checkout", csdkRevision ], { cwd: repoPaths.iotivity } );
+//		run( "git", [ "checkout", csdkRevision ], { cwd: repoPaths.iotivity } );
 	} else {
 
 		// Do a shallow checkout of iotivity
-		run( "git", [ "clone", "--depth", "1", "--single-branch", "--branch", csdkRevision,
+		run( "git", [ "clone", //"--depth", "1", "--single-branch", "--branch", csdkRevision,
 			"https://gerrit.iotivity.org/gerrit/iotivity", repoPaths.iotivity ] );
 	}
 
 	// Apply patches
-	if ( fs.existsSync( repoPaths.patchesPath ) &&
-			fs.statSync( repoPaths.patchesPath ).isDirectory() ) {
-		fs.readdirSync( repoPaths.patchesPath ).forEach( function( item ) {
-			run( "git", [ "apply", path.join( repoPaths.patchesPath, item ) ],
-				{ cwd: repoPaths.iotivity } );
-		} );
-	}
+	// if ( fs.existsSync( repoPaths.patchesPath ) &&
+	// 		fs.statSync( repoPaths.patchesPath ).isDirectory() ) {
+	// 	fs.readdirSync( repoPaths.patchesPath ).forEach( function( item ) {
+	// 		run( "git", [ "apply", path.join( repoPaths.patchesPath, item ) ],
+	// 			{ cwd: repoPaths.iotivity } );
+	// 	} );
+	// }
 
 	// Clone mbedtls inside iotivity
 	run( "git", [ "clone", "https://github.com/ARMmbed/mbedtls.git", mbedtlsPath ] );
@@ -180,8 +180,10 @@ if ( buildIotivity ) {
 		// Build
 	var sconsCommand = "scons";
 	var sconsArguments = [
-		"SECURED=1",
+		"SECURED=0",
 		"RD_MODE=all",
+		"TEST=0",
+		"BUILD_SAMPLE=OFF",
 		"EXC_PROV_SUPPORT=1"
 	]
 	.concat( ( process.env.V === "1" || process.env.npm_config_verbose === "true" ) ?
@@ -192,7 +194,7 @@ if ( buildIotivity ) {
 		[ "SYS_VERSION=" + sysVersion ] : [] )
 	.concat( process.env.npm_config_debug === "true" ?
 		[ "RELEASE=False", "LOGGING=False" ] : [] )
-	.concat( [ "logger", "octbstack", "connectivity_abstraction", "coap", "c_common", "ocsrm",
+	.concat( [ "logger", "octbstack", "connectivity_abstraction", "c_common", "ocsrm",
 		"routingmanager", "resource/csdk/security/tool", "resource_directory"
 	] );
 
@@ -211,10 +213,10 @@ binariesSource = findBins( repoPaths.iotivity );
 
 // Install json2cbor
 shelljs.mkdir( "-p", installBinaries );
-shelljs.cp(
-	path.join( binariesSource, "resource", "csdk", "security", "tool",
-		"json2cbor" + ( process.platform.match( /^win/ ) ? ".exe" : "" ) ),
-	installBinaries );
+// shelljs.cp(
+// 	path.join( binariesSource, "resource", "csdk", "security", "tool",
+// 		"json2cbor" + ( process.platform.match( /^win/ ) ? ".exe" : "" ) ),
+// 	installBinaries );
 
 // Install the libraries
 shelljs.cp( "-r", path.join( binariesSource, "*" ), repoPaths.installLibraries );
@@ -237,6 +239,8 @@ shelljs.cp(
 		"rd_database.h" ),
 	path.join( repoPaths.iotivity, "resource", "csdk", "security", "include", "experimental",
 		"securevirtualresourcetypes.h" ),
+	path.join( repoPaths.iotivity, "resource", "csdk", "security", "include", "internal",
+		"srmresourcestrings.h" ),
 	path.join( repoPaths.iotivity, "resource", "c_common", "platform_features.h" ),
 	path.join( repoPaths.iotivity, "extlibs", "tinycbor", "tinycbor", "src", "cbor.h" ),
 	repoPaths.installHeaders );

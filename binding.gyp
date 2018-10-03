@@ -9,7 +9,7 @@
 	"target_defaults": {
 		"include_dirs": [
 			"<!@(node -p \"require('node-addon-api').include\")",
-			"<(module_root_dir)/src"
+			"<(module_root_dir)/src",
 		],
 		"conditions": [
 
@@ -20,7 +20,7 @@
 				"libraries": [ "<!@(node -p \"process.env.OCTBSTACK_LIBS\")" ],
 				"cflags": [ "<!@(node -p \"process.env.OCTBSTACK_CFLAGS\")" ],
 				"xcode_settings": {
-					"OTHER_CFLAGS": [ "<!@(node -p \"process.env.OCTBSTACK_CFLAGS\")" ]
+					"OTHER_CFLAGS": [ "<!@(node -p \"process.env.OCTBSTACK_CFLAGS\")"]
 				}
 			}, {
 
@@ -41,11 +41,23 @@
 
 					# Generic way that works for POSIX
 						"libraries": [
-							"-L<(module_root_dir)/iotivity-installed/lib",
-							"-Wl,-rpath <(module_root_dir)/iotivity-installed/lib",
-							"-loctbstack",
-							"-lresource_directory"
-						]
+                        "-Wl,--whole-archive",
+                        "<(module_root_dir)/iotivity-installed/lib/libc_common.a",
+                        "<(module_root_dir)/iotivity-installed/lib/libconnectivity_abstraction_internal.a",
+                        "<(module_root_dir)/iotivity-installed/lib/libcoap.a",
+                        "<(module_root_dir)/iotivity-installed/lib/libocsrm.a",
+                        "-Wl,--no-whole-archive",
+                        "<(module_root_dir)/iotivity-installed/lib/libconnectivity_abstraction.a",
+                        "<(module_root_dir)/iotivity-installed/lib/liblogger.a",
+                        "<(module_root_dir)/iotivity-installed/lib/libmbedcrypto.a",
+                        "<(module_root_dir)/iotivity-installed/lib/liboctbstack.a",
+                        "<(module_root_dir)/iotivity-installed/lib/liboctbstack_internal.a",
+                        "<(module_root_dir)/iotivity-installed/lib/libresource_directory.a",
+                        "<(module_root_dir)/iotivity-installed/lib/libroutingmanager.a",
+                        "-lglib-2.0",
+                        "-lgobject-2.0",
+                        "-lgio-2.0"
+                        ]
 					} ],
 
 					[ "OS=='mac'", {
@@ -81,10 +93,10 @@
 				}
 			} ]
 		],
-		"cflags_cc": [ '-std=c++11' ],
-	},
+        		"cflags_cc": [ '-std=c++11', '<!@(pkg-config --cflags-only-I glib-2.0)' ],
+        },
 
-	"targets": [
+	    "targets": [
 		{
 			"target_name": "csdk",
 			"type": "none",

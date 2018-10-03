@@ -1,8 +1,8 @@
 {
   "name": "iotivity-node",
-  "version": "1.3.1-2",
+  "version": "1.3.1-5",
   "description": "IoTivity bindings",
-  "repository": "https://github.com/otcshare/iotivity-node/",
+  "repository": "https://github.com/vaibhav3002/iotivity-node/",
   "license": "Apache-2.0",
   "main": "index.js",
   "engines": {
@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "test": "grunt test",
+    "install": "prebuild-install --force || node-gyp rebuild",
     "postinstall": "node build-scripts/postinstall.js"
   },
   "gypfile": true,
@@ -39,6 +40,7 @@
     "lodash.without": "^4.0.0",
     "node-addon-api": "^1.2.0",
     "osenv": "^0.1.3",
+    "prebuild-install": "^4.0.0",
     "sha.js": "^2.4.4",
     "shelljs": "^0.5.3"
   },
